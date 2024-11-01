@@ -1,0 +1,14 @@
+h1 {
+  margin: 0 auto;
+  color: #509fe6;
+  font-weight: 700;
+}
+label {
+  color: #000;
+  display: inline-block;
+  margin: .25rem 0;
+}
+#cardNumber-container,
+#securityCode-container {
+  height: 2.5rem;
+}

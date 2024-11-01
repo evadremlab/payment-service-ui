@@ -1,0 +1,64 @@
+<section>
+  <h1 *ngIf="!isLoading && (!isUserAuthorized || !isMicroformScriptLoaded)" class="text-center">
+    {{status}}
+  </h1>
+  <div class="container" *ngIf="isUserAuthorized" [ngClass]="isMicroformScriptLoaded ? '' : 'hidden'">
+    <h1>Hosted Microform</h1>
+    <form [formGroup]="form">
+      <div class="form-row">
+        <div class="col-md-12">
+          <label for="cardHolderName">Name</label>
+          <input type="text" id="cardHolderName" formControlName="cardHolderName" class="form-control">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-md-6">
+          <label for="cardNumber">Card Number</label>
+          <div id="cardNumber-container" class="form-control"></div>
+          <div class="text_error" *ngIf="cardNumberValidationError">
+            {{cardNumberValidationError}}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label for="securityCode">Security Code</label>
+          <div id="securityCode-container" class="form-control"></div>
+          <div class="text_error" *ngIf="securityCodeValidationError">
+            {{securityCodeValidationError}}
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-md-6">
+          <label for="expiryMonth">Expiry Month</label>
+          <select formControlName="expiryMonth" class="form-control">
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="expiryYear">Expiry Year</label>
+          <select formControlName="expiryYear" class="form-control">
+            <option>2024</option>
+            <option>2025</option>
+            <option>2026</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row" style="padding-top:1rem;">
+        <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="!allowSubmit()">
+          Add Payment Method
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
