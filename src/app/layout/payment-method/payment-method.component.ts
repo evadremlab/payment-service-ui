@@ -1,3 +1,6 @@
+/**
+ * https://developer.cybersource.com/demo/doc/microform_doc.html
+ */
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -34,8 +37,7 @@ export class PaymentMethodComponent implements OnInit {
     private scriptService: ScriptService,
   ) {
     this.form = new FormGroup({
-      // cardHolderName: new FormControl('DavidB Testcase', [Validators.required]),
-      cardHolderName: new FormControl('', [Validators.required]),
+      zipCode: new FormControl('94501', [Validators.required]),
       expiryMonth: new FormControl('12', [Validators.required]),
       expiryYear: new FormControl('2024', [Validators.required])
     });
@@ -84,20 +86,21 @@ export class PaymentMethodComponent implements OnInit {
 
     const cardNumber = this.microform.createField('number', { placeholder: 'Enter card number' });
     const securityCode = this.microform.createField('securityCode', { placeholder: '•••' });
-    const cardSecurityCodeLabel = document.querySelector('label[for=securityCode-container]');
     cardNumber.load('#cardNumber-container');
     securityCode.load('#securityCode-container');
     
     cardNumber.on('change', (data) => {
       this.resetValidationErrors();
+      if (!data.empty) {
+        this.enteredCardNumber = true;
+      }
       if (data.valid) { // no more input accepted once it's valid
         securityCode.focus();
-        this.enteredCardNumber = true;
       }
     });
 
     securityCode.on('change', (data) => {
-      if (data.valid) {
+      if (!data.empty) {
         this.enteredSecurityCode = true;
         this.resetValidationErrors();
       }
@@ -117,17 +120,17 @@ export class PaymentMethodComponent implements OnInit {
     const _self = this;
     if (this.form.valid) {
       let options = {
+        zipCode: this.form.get('zipCode').value,
         expirationMonth: this.form.get('expiryMonth').value,
         expirationYear: this.form.get('expiryYear').value
       };
-  
       this.microform.createToken(options, function (err, token) {
         if (err) {
           for (let details of err.details) {
             if (details.location === 'number') {
               _self.cardNumberValidationError = 'valid number is required';
             } else if (details.location === 'securityCode') {
-              _self.securityCodeValidationError = 'valid security code is required';
+              _self.securityCodeValidationError = 'valid code is required';
             }
           }
         } else {

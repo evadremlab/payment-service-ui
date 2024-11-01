@@ -1,25 +1,22 @@
+<!--
+https://developer.cybersource.com/demo/doc/microform_doc.html
+-->
 <section>
   <h1 *ngIf="!isLoading && (!isUserAuthorized || !isMicroformScriptLoaded)" class="text-center">
     {{status}}
   </h1>
-  <div class="container" *ngIf="isUserAuthorized" [ngClass]="isMicroformScriptLoaded ? '' : 'hidden'">
+  <div class="container card" *ngIf="isUserAuthorized" [ngClass]="isMicroformScriptLoaded ? '' : 'hidden'">
     <h1>Hosted Microform</h1>
     <form [formGroup]="form">
       <div class="form-row">
-        <div class="col-md-12">
-          <label for="cardHolderName">Name</label>
-          <input type="text" id="cardHolderName" formControlName="cardHolderName" class="form-control">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="col-md-6">
+        <div class="col-xs-6">
           <label for="cardNumber">Card Number</label>
           <div id="cardNumber-container" class="form-control"></div>
           <div class="text_error" *ngIf="cardNumberValidationError">
             {{cardNumberValidationError}}
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-xs-6">
           <label for="securityCode">Security Code</label>
           <div id="securityCode-container" class="form-control"></div>
           <div class="text_error" *ngIf="securityCodeValidationError">
@@ -28,9 +25,9 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="col-md-6">
+        <div class="col-xs-4">
           <label for="expiryMonth">Expiry Month</label>
-          <select formControlName="expiryMonth" class="form-control">
+          <select id="expiryMonth" formControlName="expiryMonth" class="form-control">
             <option value="01">January</option>
             <option value="02">February</option>
             <option value="03">March</option>
@@ -45,19 +42,25 @@
             <option value="12">December</option>
           </select>
         </div>
-        <div class="col-md-6">
+        <div class="col-xs-4">
           <label for="expiryYear">Expiry Year</label>
-          <select formControlName="expiryYear" class="form-control">
+          <select id="expiryYear" formControlName="expiryYear" class="form-control">
             <option>2024</option>
             <option>2025</option>
             <option>2026</option>
           </select>
         </div>
+        <div class="col-xs-4">
+          <label for="zipCode">Zip Code</label>
+          <input type="text" id="zipCode" formControlName="zipCode" class="form-control">
+        </div>
       </div>
       <div class="form-row" style="padding-top:1rem;">
-        <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="!allowSubmit()">
-          Add Payment Method
-        </button>
+        <div class="col-xs-12">
+          <button type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="!allowSubmit()">
+            Add Payment Method
+          </button>
+        </div>
       </div>
     </form>
   </div>

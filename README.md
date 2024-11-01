@@ -2,28 +2,28 @@
 
 Provides a "drop-in" UI for Cybersource integration.
 
-# Development Setup #
-Clone the project
+## Development Setup #
+* Clone the project
 
-Update the paymentServiceRoot inside /src/environments to be the root URL of the payment service API.
+* Update the paymentServiceRoot inside /src/environments to be the root URL of the payment service API.
 
-Change the permission of cloned folder so that it can be accessed by angular
+* Change the permission of cloned folder so that it can be accessed by angular.
 ```
 sudo chmod -R 777 payment-service-ui
 ```
 
-Run "npm install" command in cloned repository
+* Run "npm install" command in cloned repository.
 ```
 cd payment-service-ui/
 npm install
-
 ```
-Start Project on local
+
+* Start Project on local.
 ```
 npm run start-dev
 ```
 
-# Usage
+## Usage
 
 Will be contained within an IFRAME like this:
 ```
@@ -31,6 +31,8 @@ Will be contained within an IFRAME like this:
 ```
 
 The bearer token will be same user token that's passed from the app, and will be used in requests to the payment service API for authentication.
+
+If the user token was authenticated, you will see the hosted microform, otherwise an authentication error message will be displayed.
 
 ![image](src/assets/img/hosted-microform.png)
 

@@ -20,7 +20,6 @@ import { LayoutRoutes } from "./layout.routing";
 
 //components
 import { LayoutComponent } from './layout.component';
-import { PaymentMethodComponent } from './payment-method/payment-method.component';
 
 @NgModule({
   imports: [
@@ -29,7 +28,6 @@ import { PaymentMethodComponent } from './payment-method/payment-method.componen
   ],
   declarations: [
     LayoutComponent,
-    PaymentMethodComponent,
     OnlynumberDirective,
   ],
   entryComponents: [

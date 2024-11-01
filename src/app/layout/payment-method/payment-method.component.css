@@ -8,7 +8,26 @@ label {
   display: inline-block;
   margin: .25rem 0;
 }
+#cardNumber-container {
+  width: 15rem;
+}
+#securityCode-container {
+  width: 6rem;
+}
 #cardNumber-container,
 #securityCode-container {
   height: 2.5rem;
+}
+#expiryMonth {
+  width: 10.5rem;
+}
+#expiryYear {
+  width: 5rem;
+}
+#zipCode {
+  width: 5rem;
+}
+.text_error {
+  margin-top: 0;
+  margin-bottom: 10px;
 }

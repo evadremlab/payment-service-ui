@@ -17,6 +17,8 @@ import { ScriptService } from './services/script/script-service';
 import { AppComponent } from './app.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LoaderComponent } from './shared/components/loader/loader.component';
+import { TestFormComponent } from './layout/test-form/test-form.component';
+import { PaymentMethodComponent } from './layout/payment-method/payment-method.component';
 
 //interceptors
 import { HttpClientModule } from '@angular/common/http';
@@ -29,6 +31,8 @@ import { ToastrModule } from 'ngx-toastr';
     AppComponent,
     NotFoundComponent,
     LoaderComponent,
+    TestFormComponent,
+    PaymentMethodComponent,
   ],
   imports: [
     BrowserModule,
