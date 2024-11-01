@@ -1,12 +1,28 @@
-h1 {
-  margin: 0 auto;
-  color: #509fe6;
-  font-weight: 700;
-}
 label {
   color: #000;
   display: inline-block;
-  margin: .25rem 0;
+  margin: 0.25rem 0;
+}
+input, label, select {
+  font-size: 14px;
+}
+.alert {
+  font-size: 1.25rem;
+}
+.card {
+  padding: 0;
+}
+.card-title {
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.176); /* same as card border */
+}
+.card-title img {
+  height: 1.2rem;
+  padding-left: 1rem;
+}
+.card-body {
+  padding-top: 0.15rem;
 }
 #cardNumber-container {
   width: 15rem;

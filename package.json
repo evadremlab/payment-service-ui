@@ -29,6 +29,7 @@
     "font-awesome": "^4.7.0",
     "http-server": "^14.1.1",
     "jquery": "^3.5.1",
+    "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.22.2",
     "ngx-toastr": "^14.1.3",

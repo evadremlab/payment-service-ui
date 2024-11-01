@@ -2,11 +2,13 @@
  * https://developer.cybersource.com/demo/doc/microform_doc.html
  */
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
 import { PaymentService } from '../../services/payment/payment.service';
 import { ScriptService } from '../../services/script/script-service';
+
+import * as jwt from 'jwt-decode';
 
 declare const Flex: any; // so we don't get an error when referencing the Flex class in the microform library
 
@@ -18,11 +20,11 @@ declare const Flex: any; // so we don't get an error when referencing the Flex c
 export class PaymentMethodComponent implements OnInit {
   form: FormGroup;
   microform: any;
-  public showError: boolean = false;
+  expiryYears: Array<number> = [];
   public isLoading: boolean = false;
   public isUserAuthorized: boolean = false;
   public isMicroformScriptLoaded: boolean = false;
-  public status: string = 'Authenticating...';
+  public errorMessage: string;
   public captureContext: string;
   public cardNumberValidationError: string;
   public securityCodeValidationError: string;
@@ -30,54 +32,96 @@ export class PaymentMethodComponent implements OnInit {
   public enteredSecurityCode: boolean = false;
 
   constructor(
-    private fb: FormBuilder,
     private route: ActivatedRoute,
     private paymentService: PaymentService,
     private renderer: Renderer2,
     private scriptService: ScriptService,
   ) {
     this.form = new FormGroup({
-      zipCode: new FormControl('94501', [Validators.required]),
-      expiryMonth: new FormControl('12', [Validators.required]),
-      expiryYear: new FormControl('2024', [Validators.required])
+      zipCode: new FormControl('', [Validators.required]),
+      expiryMonth: new FormControl('', [Validators.required]),
+      expiryYear: new FormControl('', [Validators.required])
     });
   }
 
   ngOnInit() {
+    this.populateDefaultFormValues();
     const token = this.route.snapshot.queryParams['token'];
     if (token) {
       // https://jasonwatmore.com/post/2022/11/08/angular-http-request-error-handling-with-the-httpclient
       this.paymentService.getCaptureContext(token, window.location.origin).subscribe({
         next: (res: any) => {
-          this.status = '';
+          let scriptPath: string;
+          this.errorMessage = '';
           this.isLoading = false;
           this.isUserAuthorized = true;
           this.captureContext = res.client_token;
-          // TODO: use the asset path returned in the captureContext
-          const SCRIPT_PATH = 'https://testflex.cybersource.com/microform/bundle/v2.0/flex-microform.min.js';
-          const scriptElement = this.scriptService.loadJsScript(this.renderer, SCRIPT_PATH);
+          scriptPath = this.getScriptPath(this.captureContext);
+          const scriptElement = this.scriptService.loadJsScript(this.renderer, scriptPath);
           scriptElement.onload = () => {
             this.renderMicroform();
             this.isMicroformScriptLoaded = true;
           }
           scriptElement.onerror = () => {
-            this.status = `Could not load ${SCRIPT_PATH}`;
+            this.errorMessage = `Could not load ${scriptPath}`;
           }
         }, error: (err: any) => {
           this.isLoading = false;
-          this.status = `${err.statusText}, cannot display microform`;
+          this.errorMessage = `${err.statusText}, cannot display microform`;
         }
       });
     } else {
-      this.status = `Token parameter missing, cannot display microform`;
+      this.errorMessage = `Token parameter missing, cannot display microform`;
     }
   }
 
+  /**
+   * Default the expiryYear to the current year.
+   * Default the expiryMonth to the current month.
+   */
+  populateDefaultFormValues() {
+    let currentYear = (new Date()).getFullYear();
+    let currentMonth = (new Date()).getMonth() + 1;
+    this.form.get('expiryMonth').setValue(currentMonth);
+    this.form.get('expiryYear').setValue(currentYear);
+    for (let i = 0; i < 5; i++){
+      this.expiryYears.push(currentYear + i);
+    }
+    // for localhost debugging
+    if (window.location.hostname === 'localhost') {
+      this.form.get('zipCode').setValue('94501');
+    }
+  }
+  
+  /**
+   * Get link to microform library from capture context (with default fallback).
+   */
+  getScriptPath(captureContext) {
+    let scriptPath: string = 'https://testflex.cybersource.com/microform/bundle/v2.0/flex-microform.min.js';
+    try {
+      const decoded = jwt.jwtDecode(captureContext);
+      if (decoded) {
+        const ctx = decoded['ctx'];
+        if (ctx?.length) {
+          scriptPath = ctx[0]?.data?.clientLibrary;
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      return scriptPath;
+    }
+  }
+
+  /**
+   * Replace the card number and security code placeholders 
+   * with iframes hosted by Cybersource, and attach event handlers.
+   */
   renderMicroform() {
     const flex = new Flex(this.captureContext);
     this.microform = flex.microform({
       styles: {
-        input: { 'font-size': '1rem' },
+        input: { 'font-size': '14px' },
         valid: { 'color': 'blue' },
         invalid: { 'color': 'red' },
         ':disabled': { 'cursor': 'not-allowed' }
@@ -88,7 +132,7 @@ export class PaymentMethodComponent implements OnInit {
     const securityCode = this.microform.createField('securityCode', { placeholder: '•••' });
     cardNumber.load('#cardNumber-container');
     securityCode.load('#securityCode-container');
-    
+
     cardNumber.on('change', (data) => {
       this.resetValidationErrors();
       if (!data.empty) {
@@ -128,9 +172,9 @@ export class PaymentMethodComponent implements OnInit {
         if (err) {
           for (let details of err.details) {
             if (details.location === 'number') {
-              _self.cardNumberValidationError = 'valid number is required';
+              _self.cardNumberValidationError = 'valid number required';
             } else if (details.location === 'securityCode') {
-              _self.securityCodeValidationError = 'valid code is required';
+              _self.securityCodeValidationError = 'valid code required';
             }
           }
         } else {
@@ -140,9 +184,6 @@ export class PaymentMethodComponent implements OnInit {
           // TOOD: return list of payment methods on successs
         }
       });
-    } else {
-      // this.form.markAllAsTouched();
-      // return;
     }
   }
 }
