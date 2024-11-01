@@ -5,6 +5,7 @@ import { LayoutComponent } from './layout.component';
 
 import { PaymentMethodComponent } from './payment-method/payment-method.component';
 import { TestFormComponent } from './test-form/test-form.component';
+import { TestIFrameComponent } from './test-iframe/test-iframe.component';
 
 export const LayoutRoutes: Routes = [
   {
@@ -18,13 +19,7 @@ export const LayoutRoutes: Routes = [
     ]
   },
   {
-    path: 'test',
-    component: LayoutComponent,
-    children: [
-      {
-        path: 'test', component: TestFormComponent,
-        data: { title: 'Test Form' }
-      },
-    ]
+    path: 'iframe',
+    component: TestIFrameComponent,
   },
 ];

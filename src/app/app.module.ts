@@ -18,7 +18,11 @@ import { AppComponent } from './app.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LoaderComponent } from './shared/components/loader/loader.component';
 import { TestFormComponent } from './layout/test-form/test-form.component';
+import { TestIFrameComponent } from './layout/test-iframe/test-iframe.component';
 import { PaymentMethodComponent } from './layout/payment-method/payment-method.component';
+
+//pipes
+import { SafePipe } from './shared/pipes/safe.pipe';
 
 //interceptors
 import { HttpClientModule } from '@angular/common/http';
@@ -28,10 +32,12 @@ import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
+    SafePipe,
     AppComponent,
     NotFoundComponent,
     LoaderComponent,
     TestFormComponent,
+    TestIFrameComponent,
     PaymentMethodComponent,
   ],
   imports: [

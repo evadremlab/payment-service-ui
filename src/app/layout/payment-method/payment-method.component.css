@@ -42,6 +42,7 @@ input, label, select {
 }
 #zipCode {
   width: 5rem;
+  padding: 0.45rem; /* make it the same height as other inputs */
 }
 .text_error {
   margin-top: 0;

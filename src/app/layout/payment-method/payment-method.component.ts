@@ -2,8 +2,9 @@
  * https://developer.cybersource.com/demo/doc/microform_doc.html
  */
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 import { PaymentService } from '../../services/payment/payment.service';
 import { ScriptService } from '../../services/script/script-service';
@@ -21,7 +22,7 @@ export class PaymentMethodComponent implements OnInit {
   form: FormGroup;
   microform: any;
   expiryYears: Array<number> = [];
-  public isLoading: boolean = false;
+  public bearerToken: string;
   public isUserAuthorized: boolean = false;
   public isMicroformScriptLoaded: boolean = false;
   public errorMessage: string;
@@ -36,6 +37,7 @@ export class PaymentMethodComponent implements OnInit {
     private paymentService: PaymentService,
     private renderer: Renderer2,
     private scriptService: ScriptService,
+    private toastrService: ToastrService,
   ) {
     this.form = new FormGroup({
       zipCode: new FormControl('', [Validators.required]),
@@ -46,30 +48,9 @@ export class PaymentMethodComponent implements OnInit {
 
   ngOnInit() {
     this.populateDefaultFormValues();
-    const token = this.route.snapshot.queryParams['token'];
-    if (token) {
-      // https://jasonwatmore.com/post/2022/11/08/angular-http-request-error-handling-with-the-httpclient
-      this.paymentService.getCaptureContext(token, window.location.origin).subscribe({
-        next: (res: any) => {
-          let scriptPath: string;
-          this.errorMessage = '';
-          this.isLoading = false;
-          this.isUserAuthorized = true;
-          this.captureContext = res.client_token;
-          scriptPath = this.getScriptPath(this.captureContext);
-          const scriptElement = this.scriptService.loadJsScript(this.renderer, scriptPath);
-          scriptElement.onload = () => {
-            this.renderMicroform();
-            this.isMicroformScriptLoaded = true;
-          }
-          scriptElement.onerror = () => {
-            this.errorMessage = `Could not load ${scriptPath}`;
-          }
-        }, error: (err: any) => {
-          this.isLoading = false;
-          this.errorMessage = `${err.statusText}, cannot display microform`;
-        }
-      });
+    this.bearerToken = this.route.snapshot.queryParams['token'];
+    if (this.bearerToken) {
+      this.getCaptureContext();
     } else {
       this.errorMessage = `Token parameter missing, cannot display microform`;
     }
@@ -92,11 +73,37 @@ export class PaymentMethodComponent implements OnInit {
       this.form.get('zipCode').setValue('94501');
     }
   }
+
+  /**
+   * Generate the context of the customer payment information that is to be captured and tokenized.
+   */
+  getCaptureContext() {
+    // https://jasonwatmore.com/post/2022/11/08/angular-http-request-error-handling-with-the-httpclient
+    this.paymentService.getCaptureContext(this.bearerToken, window.location.origin).subscribe({
+      next: (res: any) => {
+        let scriptPath: string;
+        this.errorMessage = '';
+        this.isUserAuthorized = true;
+        this.captureContext = res.client_token;
+        scriptPath = this.getScriptPath(this.captureContext);
+        const scriptElement: any = this.scriptService.loadJsScript(this.renderer, scriptPath);
+        scriptElement.onload = () => {
+          this.renderMicroform();
+          this.isMicroformScriptLoaded = true;
+        }
+        scriptElement.onerror = () => {
+          this.errorMessage = `Could not load ${scriptPath}`;
+        }
+      }, error: (err: any) => {
+        this.errorMessage = `${err.statusText}, cannot display microform`;
+      }
+    });
+  }
   
   /**
    * Get link to microform library from capture context (with default fallback).
    */
-  getScriptPath(captureContext) {
+  getScriptPath(captureContext: string) {
     let scriptPath: string = 'https://testflex.cybersource.com/microform/bundle/v2.0/flex-microform.min.js';
     try {
       const decoded = jwt.jwtDecode(captureContext);
@@ -130,6 +137,7 @@ export class PaymentMethodComponent implements OnInit {
 
     const cardNumber = this.microform.createField('number', { placeholder: 'Enter card number' });
     const securityCode = this.microform.createField('securityCode', { placeholder: '•••' });
+
     cardNumber.load('#cardNumber-container');
     securityCode.load('#securityCode-container');
 
@@ -164,11 +172,11 @@ export class PaymentMethodComponent implements OnInit {
     const _self = this;
     if (this.form.valid) {
       let options = {
-        zipCode: this.form.get('zipCode').value,
-        expirationMonth: this.form.get('expiryMonth').value,
-        expirationYear: this.form.get('expiryYear').value
+        expiryMonth: this.form.get('expiryMonth').value,
+        expiryYear: this.form.get('expiryYear').value,
+        zipCode: this.form.get('zipCode').value
       };
-      this.microform.createToken(options, function (err, token) {
+      this.microform.createToken(options, function (err: any, token: string) {
         if (err) {
           for (let details of err.details) {
             if (details.location === 'number') {
@@ -178,12 +186,39 @@ export class PaymentMethodComponent implements OnInit {
             }
           }
         } else {
-          const postData = Object.assign({ nonce: token }, _self.form.value);
-          console.log(postData);
-          // TODO: POST to addPaymentMethod endpoint
-          // TOOD: return list of payment methods on successs
+          _self.addPaymentMethod(Object.assign({ nonce: token }, _self.form.value));
         }
       });
     }
+  }
+
+  addPaymentMethod(data: any) {
+    this.toastrService.success(`Added Visa ending with 1111`, '', {
+      timeOut: 3000,
+      tapToDismiss: false,
+      positionClass: 'toast-bottom-left'
+    });
+    setTimeout(() => {
+      // TODO: notify parent window (only if IFRAME)
+    }, 3000);
+    // this.paymentService.addPaymentMethod(this.bearerToken, data).subscribe({
+    //   next: (paymentMethod: any) => {
+    //     this.form.reset()
+    //     this.toastrService.success(`Added ${paymentMethod.nickname}`, '', {
+    //       timeOut: 3000,
+    //       tapToDismiss: false,
+    //       positionClass: 'toast-bottom-left'
+    //     });
+    //     setTimeout(() => {
+    //       // TODO: notify parent window (only if IFRAME)
+    //     }, 3000);
+    //   }, error: (err: any) => {
+    //     this.toastrService.error(`Error, adding payment method: ${err.message}`, '', {
+    //       timeOut: 3000,
+    //       tapToDismiss: false,
+    //       positionClass: 'toast-bottom-left'
+    //     });
+    //   }
+    // });
   }
 }

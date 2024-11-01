@@ -1,0 +1,28 @@
+section {
+  margin: 1rem;
+}
+label {
+  color: #000;
+  display: inline-block;
+  margin: 0.25rem 0;
+}
+input, label, select {
+  font-size: 14px;
+}
+h1 {
+  color: #000;
+}
+form {
+  margin: 1rem;
+}
+button {
+  margin-top: 1rem;
+}
+.error_text {
+  color: red;
+}
+#hosted-microform {
+  margin: 0 auto;
+  width: 400px;
+  height: 300px;
+}
