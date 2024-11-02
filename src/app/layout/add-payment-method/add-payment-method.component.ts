@@ -193,11 +193,6 @@ export class AddPaymentMethodComponent implements OnInit {
   }
 
   addPaymentMethod(data: any) {
-    this.toastrService.success(`Added Visa ending with 1111`, '', {
-      timeOut: 3000,
-      tapToDismiss: false,
-      positionClass: 'toast-bottom-left'
-    });
     this.paymentService.addPaymentMethod(this.bearerToken, data).subscribe({
       next: (paymentMethod: any) => {
         this.form.reset()

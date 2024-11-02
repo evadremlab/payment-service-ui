@@ -27,7 +27,6 @@ export class TestIFrameComponent implements OnInit {
         let paymentMethod = evt?.data?.paymentMethod;
         if (paymentMethod) {
           this.addedPaymentMethod = true;
-          alert(`Added ${paymentMethod.nickname}`);
           this.router.navigate([`/listPaymentMethods/${this.bearerToken}`]);
         }
       }
