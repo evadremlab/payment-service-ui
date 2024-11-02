@@ -28,7 +28,7 @@ export class ListPaymentMethodsComponent implements OnInit {
           this.errorMessage = '';
           this.paymentMethods = res.payment_methods;
         } else {
-          this.errorMessage = 'No payments found for this user.';
+          this.errorMessage = 'No payment methods found for this user.';
         }
       }, error: (err: any) => {
         this.errorMessage = 'Error getting user profile, token probably expired.';
