@@ -24,13 +24,14 @@ export class ListPaymentMethodsComponent implements OnInit {
     this.bearerToken = this.route.snapshot.paramMap.get('token');
     this.paymentService.getUserProfile(this.bearerToken).subscribe({
       next: (res: any) => {
-        this.paymentMethods = res?.payment_methods || [];
-        this.errorMessage = '';
-        // source eg: "American Express"
-        // nickname eg: "American Express ending in 4444"
-        // credit_card_expiration_date // TODO: need to convert to MM/YY
+        if (res?.payment_methods?.length) {
+          this.errorMessage = '';
+          this.paymentMethods = res.payment_methods;
+        } else {
+          this.errorMessage = 'No payments found for this user.';
+        }
       }, error: (err: any) => {
-        this.errorMessage = err.message;
+        this.errorMessage = 'Error getting user profile, token probably expired.';
       }
     });
   }

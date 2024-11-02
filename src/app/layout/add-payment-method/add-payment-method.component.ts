@@ -157,11 +157,6 @@ export class AddPaymentMethodComponent implements OnInit {
         this.resetValidationErrors();
       }
     });
-
-    // TODO: remove after debugging
-    setTimeout(() => {
-      window.parent.postMessage({ paymentMethod: { nickname: 'Visa ending with 1111' }}, '*');
-    }, 1000);
   }
 
   resetValidationErrors() {
@@ -211,10 +206,9 @@ export class AddPaymentMethodComponent implements OnInit {
           tapToDismiss: false,
           positionClass: 'toast-bottom-left'
         });
-        setTimeout(() => {
-          // notify parent window
+        setTimeout(() => { // notify parent window
           window.parent.postMessage({ paymentMethod }, '*');
-        }, 3000);
+        }, 3000); // same timeout as toast message
       }, error: (err: any) => {
         this.toastrService.error(`Error, adding payment method: ${err.message}`, '', {
           timeOut: 3000,
