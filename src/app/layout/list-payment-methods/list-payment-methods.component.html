@@ -1,0 +1,6 @@
+<ul class="list-group">
+  <li *ngFor="let item of paymentMethods" class="list-group-item">
+    {{ item.nickname }}
+    <br>Expiry {{formatCreditCardExpirationDate(item.credit_card_expiration_date)}}
+  </li>
+</ul>

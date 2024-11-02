@@ -17,9 +17,9 @@ import { ScriptService } from './services/script/script-service';
 import { AppComponent } from './app.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LoaderComponent } from './shared/components/loader/loader.component';
-import { TestFormComponent } from './layout/test-form/test-form.component';
 import { TestIFrameComponent } from './layout/test-iframe/test-iframe.component';
-import { PaymentMethodComponent } from './layout/payment-method/payment-method.component';
+import { AddPaymentMethodComponent } from './layout/add-payment-method/add-payment-method.component';
+import { ListPaymentMethodsComponent } from './layout/list-payment-methods/list-payment-methods.component';
 
 //pipes
 import { SafePipe } from './shared/pipes/safe.pipe';
@@ -36,9 +36,9 @@ import { ToastrModule } from 'ngx-toastr';
     AppComponent,
     NotFoundComponent,
     LoaderComponent,
-    TestFormComponent,
     TestIFrameComponent,
-    PaymentMethodComponent,
+    AddPaymentMethodComponent,
+    ListPaymentMethodsComponent,
   ],
   imports: [
     BrowserModule,

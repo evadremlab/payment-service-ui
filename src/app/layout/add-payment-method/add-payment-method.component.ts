@@ -14,11 +14,11 @@ import * as jwt from 'jwt-decode';
 declare const Flex: any; // so we don't get an error when referencing the Flex class in the microform library
 
 @Component({
-  selector: 'payment-method',
-  templateUrl: './payment-method.component.html',
-  styleUrls: ['./payment-method.component.css']
+  selector: 'add-payment-method',
+  templateUrl: './add-payment-method.component.html',
+  styleUrls: ['./add-payment-method.component.css']
 })
-export class PaymentMethodComponent implements OnInit {
+export class AddPaymentMethodComponent implements OnInit {
   form: FormGroup;
   microform: any;
   expiryYears: Array<number> = [];
@@ -157,6 +157,11 @@ export class PaymentMethodComponent implements OnInit {
         this.resetValidationErrors();
       }
     });
+
+    // TODO: remove after debugging
+    setTimeout(() => {
+      window.parent.postMessage({ paymentMethod: { nickname: 'Visa ending with 1111' }}, '*');
+    }, 1000);
   }
 
   resetValidationErrors() {
@@ -198,27 +203,25 @@ export class PaymentMethodComponent implements OnInit {
       tapToDismiss: false,
       positionClass: 'toast-bottom-left'
     });
-    setTimeout(() => {
-      // TODO: notify parent window (only if IFRAME)
-    }, 3000);
-    // this.paymentService.addPaymentMethod(this.bearerToken, data).subscribe({
-    //   next: (paymentMethod: any) => {
-    //     this.form.reset()
-    //     this.toastrService.success(`Added ${paymentMethod.nickname}`, '', {
-    //       timeOut: 3000,
-    //       tapToDismiss: false,
-    //       positionClass: 'toast-bottom-left'
-    //     });
-    //     setTimeout(() => {
-    //       // TODO: notify parent window (only if IFRAME)
-    //     }, 3000);
-    //   }, error: (err: any) => {
-    //     this.toastrService.error(`Error, adding payment method: ${err.message}`, '', {
-    //       timeOut: 3000,
-    //       tapToDismiss: false,
-    //       positionClass: 'toast-bottom-left'
-    //     });
-    //   }
-    // });
+    this.paymentService.addPaymentMethod(this.bearerToken, data).subscribe({
+      next: (paymentMethod: any) => {
+        this.form.reset()
+        this.toastrService.success(`Added ${paymentMethod.nickname}`, '', {
+          timeOut: 3000,
+          tapToDismiss: false,
+          positionClass: 'toast-bottom-left'
+        });
+        setTimeout(() => {
+          // notify parent window
+          window.parent.postMessage({ paymentMethod }, '*');
+        }, 3000);
+      }, error: (err: any) => {
+        this.toastrService.error(`Error, adding payment method: ${err.message}`, '', {
+          timeOut: 3000,
+          tapToDismiss: false,
+          positionClass: 'toast-bottom-left'
+        });
+      }
+    });
   }
 }

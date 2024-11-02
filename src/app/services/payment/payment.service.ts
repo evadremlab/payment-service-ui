@@ -20,4 +20,10 @@ export class PaymentService {
     const url = `${environment.paymentServiceRoot}${environment.addPaymentMethod}`;
     return this.http.post(url, data, { headers });
   }
+
+  getUserProfile(bearerToken: string): Observable<object> {
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${bearerToken}` });
+    const url = `${environment.paymentServiceRoot}${environment.getUserProfile}`;
+    return this.http.get(url, { headers });
+  }
 }

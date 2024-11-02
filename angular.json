@@ -28,8 +28,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/assets",
-              "src/.htaccess",
-              "src/adminstatus.html"
+              "src/.htaccess"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
