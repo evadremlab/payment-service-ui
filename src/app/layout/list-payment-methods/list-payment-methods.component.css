@@ -1,0 +1,3 @@
+ul.striped-list > li:nth-of-type(odd) {
+  background-color: #e9e9f9 ;
+}

@@ -21,7 +21,7 @@ declare const Flex: any; // so we don't get an error when referencing the Flex c
 export class AddPaymentMethodComponent implements OnInit {
   form: FormGroup;
   microform: any;
-  expiryYears: Array<number> = [];
+  expirationYears: Array<number> = [];
   public bearerToken: string;
   public isUserAuthorized: boolean = false;
   public isMicroformScriptLoaded: boolean = false;
@@ -41,14 +41,17 @@ export class AddPaymentMethodComponent implements OnInit {
   ) {
     this.form = new FormGroup({
       zipCode: new FormControl('', [Validators.required]),
-      expiryMonth: new FormControl('', [Validators.required]),
-      expiryYear: new FormControl('', [Validators.required])
+      expirationMonth: new FormControl('', [Validators.required]),
+      expirationYear: new FormControl('', [Validators.required])
     });
   }
 
   ngOnInit() {
     this.populateDefaultFormValues();
-    this.bearerToken = this.route.snapshot.queryParams['token'];
+    this.bearerToken = this.route.snapshot.paramMap.get('bearerToken');
+    if (!this.bearerToken) { // try the querystring
+      this.bearerToken = this.route.snapshot.queryParams['bearerToken'];
+    }
     if (this.bearerToken) {
       this.getCaptureContext();
     } else {
@@ -57,16 +60,16 @@ export class AddPaymentMethodComponent implements OnInit {
   }
 
   /**
-   * Default the expiryYear to the current year.
-   * Default the expiryMonth to the current month.
+   * Default the expirationYear to the current year.
+   * Default the expirationMonth to the current month.
    */
   populateDefaultFormValues() {
     let currentYear = (new Date()).getFullYear();
     let currentMonth = (new Date()).getMonth() + 1;
-    this.form.get('expiryMonth').setValue(currentMonth);
-    this.form.get('expiryYear').setValue(currentYear);
+    this.form.get('expirationMonth').setValue(currentMonth);
+    this.form.get('expirationYear').setValue(currentYear);
     for (let i = 0; i < 5; i++){
-      this.expiryYears.push(currentYear + i);
+      this.expirationYears.push(currentYear + i);
     }
     // for localhost debugging
     if (window.location.hostname === 'localhost') {
@@ -172,8 +175,8 @@ export class AddPaymentMethodComponent implements OnInit {
     const _self = this;
     if (this.form.valid) {
       let options = {
-        expiryMonth: this.form.get('expiryMonth').value,
-        expiryYear: this.form.get('expiryYear').value,
+        expirationMonth: this.form.get('expirationMonth').value,
+        expirationYear: this.form.get('expirationYear').value,
         zipCode: this.form.get('zipCode').value
       };
       this.microform.createToken(options, function (err: any, token: string) {

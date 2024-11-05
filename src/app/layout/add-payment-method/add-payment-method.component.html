@@ -27,8 +27,8 @@
         </div>
         <div class="form-row">
           <div class="col-xs-4">
-            <label for="expiryMonth">Expiry Month</label>
-            <select id="expiryMonth" formControlName="expiryMonth" class="form-control">
+            <label for="expirationMonth">Expiry Month</label>
+            <select id="expirationMonth" formControlName="expirationMonth" class="form-control">
               <option value="01">January</option>
               <option value="02">February</option>
               <option value="03">March</option>
@@ -44,9 +44,9 @@
             </select>
           </div>
           <div class="col-xs-4">
-            <label for="expiryYear">Expiry Year</label>
-            <select id="expiryYear" formControlName="expiryYear" class="form-control">
-              <option *ngFor="let item of expiryYears" [value]="item">{{ item }}</option>
+            <label for="expirationYear">Expiry Year</label>
+            <select id="expirationYear" formControlName="expirationYear" class="form-control">
+              <option *ngFor="let item of expirationYears" [value]="item">{{ item }}</option>
             </select>
           </div>
           <div class="col-xs-4">

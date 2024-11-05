@@ -8,9 +8,12 @@ import { ListPaymentMethodsComponent } from './layout/list-payment-methods/list-
 
 export const rootRouterConfig: Routes = [
   { path: '', redirectTo: 'iframe', pathMatch: 'full' },
+  { path: ':bearerToken', redirectTo: 'iframe', pathMatch: 'full' },
   { path: 'iframe', component: TestIFrameComponent },
+  { path: 'iframe/:bearerToken', component: TestIFrameComponent },
   { path: 'addPaymentMethod', component: AddPaymentMethodComponent },
-  { path: 'listPaymentMethods/:token', component: ListPaymentMethodsComponent },
+  { path: 'addPaymentMethod/:bearerToken', component: AddPaymentMethodComponent },
+  { path: 'listPaymentMethods/:bearerToken', component: ListPaymentMethodsComponent },
   {
     path: '**',
     component: NotFoundComponent

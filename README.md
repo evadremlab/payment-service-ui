@@ -27,7 +27,7 @@ npm run start-dev
 
 Will be contained within an IFRAME like this:
 ```
-<iframe id="hosted-microform" frameborder="0" src="http://localhost:4200/home/?token={{bearer token}}"></iframe>
+<iframe id="hosted-microform" frameborder="0" src="http://localhost:4222/{{bearer token}}"></iframe>
 ```
 
 The bearer token will be same user token that's passed from the app, and will be used in requests to the payment service API for authentication.

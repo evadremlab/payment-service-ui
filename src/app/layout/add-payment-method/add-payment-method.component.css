@@ -34,10 +34,10 @@ input, label, select {
 #securityCode-container {
   height: 2.5rem;
 }
-#expiryMonth {
+#expirationMonth {
   width: 10.5rem;
 }
-#expiryYear {
+#expirationYear {
   width: 5rem;
 }
 #zipCode {

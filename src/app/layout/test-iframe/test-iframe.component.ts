@@ -20,17 +20,17 @@ export class TestIFrameComponent implements OnInit {
     this.form = new FormGroup({
       bearerToken: new FormControl('', [Validators.required])
     });
-    // wait for successful payment method creation
-    window.addEventListener('message', (evt: MessageEvent) => {
-      // Make sure the messages come from the correct origin
-      if (evt.origin === window.location.origin) {
-        let paymentMethod = evt?.data?.paymentMethod;
-        if (paymentMethod) {
-          this.addedPaymentMethod = true;
-          this.router.navigate([`/listPaymentMethods/${this.bearerToken}`]);
-        }
-      }
-    });
+// wait for successful payment method creation
+window.addEventListener('message', (evt: MessageEvent) => {
+  // Make sure the message is from the correct origin
+  if (evt.origin === window.location.origin) {
+    let paymentMethod = evt?.data?.paymentMethod;
+    if (paymentMethod) {
+      this.addedPaymentMethod = true;
+      this.router.navigate([`/listPaymentMethods/${this.bearerToken}`]);
+    }
+  }
+});
   }
 
   isIFrameVisible() {
@@ -42,8 +42,7 @@ export class TestIFrameComponent implements OnInit {
       this.errorMessage = '';
       this.bearerToken = this.form.get('bearerToken').value;
       const url = this.router.createUrlTree(['/addPaymentMethod']);
-      const tokenQueryString = `?token=${this.bearerToken}`;
-      this.iFrameSrc = `${window.location.origin}${url.toString()}${tokenQueryString}`;
+      this.iFrameSrc = `${window.location.origin}${url.toString()}/${this.bearerToken}`;
     } else {
       this.errorMessage = 'Bearer token value is required';
     }

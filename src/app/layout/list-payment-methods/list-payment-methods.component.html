@@ -1,9 +1,10 @@
 <div class="alert alert-danger text-center" role="alert" *ngIf="errorMessage">
   {{errorMessage}}
 </div>
-<ul class="list-group">
+<ul class="list-group striped-list">
   <li *ngFor="let item of paymentMethods" class="list-group-item">
     {{ item.nickname }}
     <br>Expiry {{formatCreditCardExpirationDate(item.credit_card_expiration_date)}}
+    <br>Created {{formatCreditCardDate(item.date_created)}}
   </li>
 </ul>

@@ -21,7 +21,7 @@ export class ListPaymentMethodsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.bearerToken = this.route.snapshot.paramMap.get('token');
+    this.bearerToken = this.route.snapshot.paramMap.get('bearerToken');
     this.paymentService.getUserProfile(this.bearerToken).subscribe({
       next: (res: any) => {
         if (res?.payment_methods?.length) {
@@ -38,5 +38,9 @@ export class ListPaymentMethodsComponent implements OnInit {
 
   formatCreditCardExpirationDate(exp: Date) {
     return moment(exp).format('MM/YY');
+  }
+
+  formatCreditCardDate(exp: Date) {
+    return moment(exp).format('llll');
   }
 }
