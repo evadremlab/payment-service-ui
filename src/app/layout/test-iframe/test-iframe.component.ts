@@ -20,17 +20,20 @@ export class TestIFrameComponent implements OnInit {
     this.form = new FormGroup({
       bearerToken: new FormControl('', [Validators.required])
     });
-// wait for successful payment method creation
-window.addEventListener('message', (evt: MessageEvent) => {
-  // Make sure the message is from the correct origin
-  if (evt.origin === window.location.origin) {
-    let paymentMethod = evt?.data?.paymentMethod;
-    if (paymentMethod) {
-      this.addedPaymentMethod = true;
-      this.router.navigate([`/listPaymentMethods/${this.bearerToken}`]);
-    }
+    // wait for successful payment method creation
+    window.addEventListener('message', this.paymentMethodAdded);
   }
-});
+
+  paymentMethodAdded(evt: MessageEvent) {
+    // Make sure the message is from the correct origin
+    if (evt.origin === window.location.origin) {
+      let paymentMethod = evt?.data?.paymentMethod;
+      if (paymentMethod) {
+        this.addedPaymentMethod = true;
+        window.removeEventListener('message', this.paymentMethodAdded);
+        this.router.navigate([`/listPaymentMethods/${this.bearerToken}`]);
+      }
+    }
   }
 
   isIFrameVisible() {

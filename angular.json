@@ -19,6 +19,8 @@
             "allowedCommonJsDependencies": [
               "lodash",
               "jquery",
+              "moment",
+              "jwt-decode",
               "zone.js/dist/zone"
             ],
             "outputPath": "dist/base",
@@ -41,14 +43,12 @@
               "src/assets/css/media.css",
               "src/assets/css/animate.css",
               "node_modules/ngx-toastr/toastr.css",
-              "node_modules/sweetalert2/dist/sweetalert2.min.css",
               "node_modules/font-awesome/css/font-awesome.min.css"
             ],
             "scripts": [
               "src/assets/js/jquery.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "src/assets/js/html5shiv.js",
-              "node_modules/sweetalert2/dist/sweetalert2.all.min.js"
+              "src/assets/js/html5shiv.js"
             ],
             "vendorChunk": true,
             "extractLicenses": false,
@@ -154,7 +154,8 @@
             "allowedCommonJsDependencies": [
               "lodash",
               "jquery",
-              "chart.js",
+              "moment",
+              "jwt-decode",
               "zone.js/dist/zone"
             ],
             "exclude": [
